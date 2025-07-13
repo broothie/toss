@@ -19,3 +19,8 @@ type Body struct {
 	Type  string `yaml:"type" json:"type" toml:"type"`
 	Value string `yaml:"value" json:"value" toml:"value"`
 }
+
+type Response struct {
+	StatusCode int               `yaml:"status_code" json:"status_code" toml:"status_code"`
+	Headers    map[string]string `yaml:"headers" json:"headers" toml:"headers"`
+}

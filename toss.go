@@ -13,15 +13,20 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/bobg/errors"
 	"github.com/broothie/qst"
+	"github.com/samber/lo"
 	"gopkg.in/yaml.v3"
 )
 
 type Toss struct {
-	templateContext *templateContext
+	Requests  map[string]Request
+	Responses map[string]Response
 }
 
 func New() *Toss {
-	return &Toss{templateContext: newTemplateContext(os.Environ())}
+	return &Toss{
+		Requests:  make(map[string]Request),
+		Responses: make(map[string]Response),
+	}
 }
 
 func (t *Toss) RunFile(ctx context.Context, fileName string) (err error) {
@@ -51,19 +56,28 @@ func (t *Toss) RunFile(ctx context.Context, fileName string) (err error) {
 }
 
 func (t *Toss) RunRequest(ctx context.Context, request Request) error {
-	path, err := t.templateContext.execute("path", request.Path)
+	templateCtx := &templateContext{
+		Env: lo.SliceToMap(os.Environ(), func(env string) (string, string) {
+			split := strings.SplitN(env, "=", 2)
+			return split[0], split[1]
+		}),
+		Requests:  t.Requests,
+		Responses: t.Responses,
+	}
+
+	path, err := templateCtx.execute("path", request.Path)
 	if err != nil {
 		return errors.Wrap(err, "evaluating path")
 	}
 
 	var queries qst.Pipeline
 	for keyTemplate, valueTemplate := range request.Query {
-		key, err := t.templateContext.execute("query key", keyTemplate)
+		key, err := templateCtx.execute("query key", keyTemplate)
 		if err != nil {
 			return errors.Wrap(err, "evaluating query key")
 		}
 
-		value, err := t.templateContext.execute("query value", valueTemplate)
+		value, err := templateCtx.execute("query value", valueTemplate)
 		if err != nil {
 			return errors.Wrap(err, "evaluating query value")
 		}
@@ -73,12 +87,12 @@ func (t *Toss) RunRequest(ctx context.Context, request Request) error {
 
 	var headers qst.Pipeline
 	for keyTemplate, valueTemplate := range request.Headers {
-		key, err := t.templateContext.execute("header key", keyTemplate)
+		key, err := templateCtx.execute("header key", keyTemplate)
 		if err != nil {
 			return errors.Wrap(err, "evaluating header key")
 		}
 
-		value, err := t.templateContext.execute("header value", valueTemplate)
+		value, err := templateCtx.execute("header value", valueTemplate)
 		if err != nil {
 			return errors.Wrap(err, "evaluating header value")
 		}
@@ -97,7 +111,7 @@ func (t *Toss) RunRequest(ctx context.Context, request Request) error {
 		return errors.Wrap(err, "building request")
 	}
 
-	t.templateContext.Requests[request.Name] = req
+	t.Requests[request.Name] = request
 
 	start := time.Now()
 	response, err := http.DefaultClient.Do(req)
@@ -106,9 +120,12 @@ func (t *Toss) RunRequest(ctx context.Context, request Request) error {
 		return errors.Wrap(err, "sending request")
 	}
 
-	fmt.Printf("%s %s %s?%s | %v %s\n", start.Format(time.RFC3339), req.Method, req.URL.Path, req.URL.RawQuery, elapsed, response.Status)
+	t.Responses[request.Name] = Response{
+		StatusCode: response.StatusCode,
+		Headers:    lo.MapValues(response.Header, func(value []string, key string) string { return strings.Join(value, "; ") }),
+	}
 
-	t.templateContext.Responses[request.Name] = response
+	fmt.Printf("%s %s %s?%s | %v %s\n", start.Format(time.RFC3339), req.Method, req.URL.Path, req.URL.RawQuery, elapsed, response.Status)
 	return nil
 }
 

@@ -3,28 +3,14 @@ package main
 import (
 	"bytes"
 	"html/template"
-	"net/http"
-	"strings"
 
 	"github.com/bobg/errors"
-	"github.com/samber/lo"
 )
 
 type templateContext struct {
 	Env       map[string]string
-	Requests  map[string]*http.Request
-	Responses map[string]*http.Response
-}
-
-func newTemplateContext(environ []string) *templateContext {
-	return &templateContext{
-		Env: lo.SliceToMap(environ, func(env string) (string, string) {
-			split := strings.SplitN(env, "=", 2)
-			return split[0], split[1]
-		}),
-		Requests:  make(map[string]*http.Request),
-		Responses: make(map[string]*http.Response),
-	}
+	Requests  map[string]Request
+	Responses map[string]Response
 }
 
 func (c templateContext) execute(name string, input string) (string, error) {
