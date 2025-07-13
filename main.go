@@ -1,6 +1,9 @@
 package main
 
-import "github.com/broothie/cli"
+import (
+	"github.com/broothie/cli"
+	_ "github.com/joho/godotenv/autoload"
+)
 
 func main() {
 	cli.Run("toss", "Send HTTP requests",
