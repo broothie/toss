@@ -100,7 +100,7 @@ func (t *Toss) RunRequest(ctx context.Context, request Request) error {
 		headers = append(headers, qst.Header(key, value))
 	}
 
-	req, err := qst.New(strings.ToUpper(request.Method), path,
+	httpRequest, err := qst.New(strings.ToUpper(request.Method), path,
 		qst.Context(ctx),
 		qst.Scheme(request.Scheme),
 		qst.Host(request.Host),
@@ -111,21 +111,20 @@ func (t *Toss) RunRequest(ctx context.Context, request Request) error {
 		return errors.Wrap(err, "building request")
 	}
 
-	t.Requests[request.Name] = request
-
 	start := time.Now()
-	response, err := http.DefaultClient.Do(req)
+	response, err := http.DefaultClient.Do(httpRequest)
 	elapsed := time.Since(start)
 	if err != nil {
 		return errors.Wrap(err, "sending request")
 	}
 
+	t.Requests[request.Name] = request
 	t.Responses[request.Name] = Response{
 		StatusCode: response.StatusCode,
 		Headers:    lo.MapValues(response.Header, func(value []string, key string) string { return strings.Join(value, "; ") }),
 	}
 
-	fmt.Printf("%s %s %s?%s | %v %s\n", start.Format(time.RFC3339), req.Method, req.URL.Path, req.URL.RawQuery, elapsed, response.Status)
+	fmt.Printf("%s %s %s?%s | %v %s\n", start.Format(time.RFC3339), httpRequest.Method, httpRequest.URL.Path, httpRequest.URL.RawQuery, elapsed, response.Status)
 	return nil
 }
 
