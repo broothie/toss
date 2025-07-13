@@ -2,6 +2,8 @@ github.com/BurntSushi/toml v1.5.0 h1:W5quZX/G/csjUnuI8SUYlsHs9M38FC7znL0lIO+DvMg
 github.com/BurntSushi/toml v1.5.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
 github.com/MakeNowJust/heredoc/v2 v2.0.1 h1:rlCHh70XXXv7toz95ajQWOWQnN4WNLt0TdpZYIR/J6A=
 github.com/MakeNowJust/heredoc/v2 v2.0.1/go.mod h1:6/2Abh5s+hc3g9nbWLe9ObDIOhaRrqsyY9MWy+4JdRM=
+github.com/bmatcuk/doublestar/v4 v4.9.0 h1:DBvuZxjdKkRP/dr4GVV4w2fnmrk5Hxc90T51LZjv0JA=
+github.com/bmatcuk/doublestar/v4 v4.9.0/go.mod h1:xBQ8jztBU6kakFMg+8WGxn0c6z1fTSPVIjEY1Wr7jzc=
 github.com/bobg/errors v1.1.0 h1:gsVanPzJMpZQpwY+27/GQYElZez5CuMYwiIpk2A3RGw=
 github.com/bobg/errors v1.1.0/go.mod h1:Q4775qBZpnte7EGFJqmvnlB1U4pkI1XmU3qxqdp7Zcc=
 github.com/broothie/cli v0.1.3 h1:Il8IzWJNe4ws//ZrUi10m0pTBk0IN08iKCBA3hEQMZk=

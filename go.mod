@@ -4,6 +4,7 @@ go 1.24.1
 
 require (
 	github.com/BurntSushi/toml v1.5.0
+	github.com/bmatcuk/doublestar/v4 v4.9.0
 	github.com/bobg/errors v1.1.0
 	github.com/broothie/cli v0.1.3
 	github.com/broothie/qst v0.1.1
