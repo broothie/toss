@@ -12,6 +12,8 @@ github.com/broothie/option v0.1.0 h1:5l6qdv9g1Ajxn7821brKVzOZxIjlVB0gA1MU8QbW8Fw
 github.com/broothie/option v0.1.0/go.mod h1:doEn1r1TpaaBJRdHLZlsdjvnrnH0u1WW+FZA018hE2g=
 github.com/broothie/qst v0.1.1 h1:rymENpbY5PyHm3Rm5jB0TNojIgq6m87BpFAw1Fr+lvA=
 github.com/broothie/qst v0.1.1/go.mod h1:3gldu96iJKhYND3R4LyPCs3OKdyM1o/0xYvOGIBs6J8=
+github.com/broothie/qst v0.1.2 h1:ElMHAc+xfb9H4I3ou+dY+GcxuC+w8A6rjpgBU7ioSDE=
+github.com/broothie/qst v0.1.2/go.mod h1:r5AYNZgJYBCTfoHzbxXwscZF8Bbeh+sOpp+SDmEKKKw=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

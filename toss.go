@@ -12,6 +12,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/bobg/errors"
+	"github.com/broothie/option"
 	"github.com/broothie/qst"
 	"github.com/samber/lo"
 	"gopkg.in/yaml.v3"
@@ -70,7 +71,22 @@ func (t *Toss) RunRequest(ctx context.Context, request Request) error {
 		return errors.Wrap(err, "evaluating path")
 	}
 
-	var queries qst.Pipeline
+	var options []option.Option[*http.Request]
+
+	// Add context
+	options = append(options, qst.WithContext(ctx))
+
+	// Add scheme if specified
+	if request.Scheme != "" {
+		options = append(options, qst.WithScheme(request.Scheme))
+	}
+
+	// Add host if specified
+	if request.Host != "" {
+		options = append(options, qst.WithHost(request.Host))
+	}
+
+	// Add query parameters
 	for keyTemplate, valueTemplate := range request.Query {
 		key, err := templateCtx.execute("query key", keyTemplate)
 		if err != nil {
@@ -82,10 +98,10 @@ func (t *Toss) RunRequest(ctx context.Context, request Request) error {
 			return errors.Wrap(err, "evaluating query value")
 		}
 
-		queries = append(queries, qst.Query(key, value))
+		options = append(options, qst.WithQuery(key, value))
 	}
 
-	var headers qst.Pipeline
+	// Add headers
 	for keyTemplate, valueTemplate := range request.Headers {
 		key, err := templateCtx.execute("header key", keyTemplate)
 		if err != nil {
@@ -97,16 +113,10 @@ func (t *Toss) RunRequest(ctx context.Context, request Request) error {
 			return errors.Wrap(err, "evaluating header value")
 		}
 
-		headers = append(headers, qst.Header(key, value))
+		options = append(options, qst.WithHeader(key, value))
 	}
 
-	httpRequest, err := qst.New(strings.ToUpper(request.Method), path,
-		qst.Context(ctx),
-		qst.Scheme(request.Scheme),
-		qst.Host(request.Host),
-		queries,
-		headers,
-	)
+	httpRequest, err := qst.New(strings.ToUpper(request.Method), path, options...)
 	if err != nil {
 		return errors.Wrap(err, "building request")
 	}
