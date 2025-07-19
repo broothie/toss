@@ -14,7 +14,7 @@ func main() {
 
 		cli.AddSubCmd("run", "Run Toss file",
 			cli.AddArg(argFile, "File containing toss requests to be run"),
-			cli.SetHandler(tossHandler),
+			cli.SetHandler(runHandler),
 		),
 
 		cli.AddSubCmd("list", "List Toss files", cli.SetHandler(listHandler)),
